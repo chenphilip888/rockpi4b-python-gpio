@@ -73,11 +73,6 @@ ls -l /sys/class/pwm
 
 -------------------------------------------------------------------------
 Install python library:
-# wget -O - apt.radxa.com/stretch/public.key | sudo apt-key add -
-# sudo apt-get update && sudo apt-get upgrade
-# sudo apt-get install -y rockchip-overlay rockchip-fstab && sudo apt-get install -y rockpi4-dtbo
-# sudo apt-get install libmraa-rockpi4
-# mraa-gpio list
 sudo pip install serial
 sudo pip install pyserial
 sudo pip install spidev
