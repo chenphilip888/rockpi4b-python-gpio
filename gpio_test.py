@@ -92,7 +92,7 @@ def closepin(pinnum):
 
 def pwm_open():
     os.system('sudo echo 0 > /sys/class/pwm/pwmchip0/export')
-    os.system('sudo echo normal > /sys/class/pwm/pwmchip0/pwm0/polarity')
+    os.system('sudo echo "normal" > /sys/class/pwm/pwmchip0/pwm0/polarity')
 
 def pwm_enable():
     os.system('sudo echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable')
@@ -154,6 +154,7 @@ def pwm_led_test():
             pwm_duty(x/100.0)
             time.sleep(0.03)
 
+    pwm_duty( 0.01 )
     pwm_stop()
 
 def tone (note, duration):
