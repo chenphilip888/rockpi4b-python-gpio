@@ -1,24 +1,5 @@
 #!/usr/bin/python
-# Copyright (c) 2021 Philip Company
-# Author: Philip Chen
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
+
 import serial
 from serial import Serial
 import os
@@ -92,6 +73,8 @@ def closepin(pinnum):
 
 def pwm_open():
     os.system('sudo echo 0 > /sys/class/pwm/pwmchip0/export')
+
+def pwm_polarity():
     os.system('sudo echo "normal" > /sys/class/pwm/pwmchip0/pwm0/polarity')
 
 def pwm_enable():
@@ -142,8 +125,10 @@ def button_test():
     closepin(switch)
 
 def pwm_led_test():
+    pwm_open()
     pwm_freq(60)
     pwm_duty(0)
+    pwm_polarity()
     pwm_enable()
 
     for i in range(0,10):
@@ -154,8 +139,8 @@ def pwm_led_test():
             pwm_duty(x/100.0)
             time.sleep(0.03)
 
-    pwm_duty( 0.01 )
     pwm_stop()
+    pwm_close()
 
 def tone (note, duration):
     if note == 0:
@@ -164,6 +149,7 @@ def tone (note, duration):
     else:
        pwm_freq(note)
        pwm_duty(0.5)
+       pwm_polarity()
        pwm_enable()
        time.sleep(duration)
        pwm_stop()
@@ -173,14 +159,18 @@ def tongsong():
     melody = [262, 196, 196, 220, 196, 0, 247, 262]
     noteDurations = [4, 8, 8, 4, 4, 4, 4, 4]
     thisNote = 0
+    pwm_open()
     while thisNote < 8:
         noteDuration = 1.0 / noteDurations[thisNote];
         tone(melody[thisNote], noteDuration)
         thisNote = thisNote + 1
+    pwm_close()
 
 def servo():
+    pwm_open()
     pwm_freq(50)
     pwm_duty(0.05)              # min 0.05, max 0.15 180 degrees
+    pwm_polarity()
     pwm_enable()
 
     for i in range(0,3):
@@ -198,6 +188,7 @@ def servo():
         time.sleep(1.0)
 
     pwm_stop()
+    pwm_close()
 
 # I2C LCD
 # set backlight to (R,G,B) (values from 0..255 for each)
@@ -463,7 +454,7 @@ def oledascii():
 def ssd1306_test():
     initpin(led, 'out')
     setpin(led, 1)
-    spi.open(32766, 0)
+    spi.open(2, 0)
     spi.max_speed_hz = 5000000
     ssd1306_init()
 
@@ -489,7 +480,6 @@ def ssd1306_test():
     spi.close()
     closepin(led)
 
-pwm_open()
 item = ""
 while item != 'q':
     item = raw_input("-- select a test --\r\n1. uart test\r\n2. led test\r\n3. button test\r\n4. pwm led test\r\n5. i2c lcd test\r\n6. tongsong\r\n7. servo\r\n8. spi oled test\r\nq. quit\r\n")
@@ -510,6 +500,5 @@ while item != 'q':
     elif item == '8':
         ssd1306_test()
     elif item == 'q':
-        pwm_close()
         print "Goodbye!"
         break

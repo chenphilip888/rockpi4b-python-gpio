@@ -1,0 +1,9 @@
+verbosity=1
+bootlogo=true
+overlay_prefix=rockchip
+fdtfile=rockchip/rk3399-rock-pi-4b.dtb
+rootdev=UUID=acc73ef9-9279-495e-8b97-1368fe2cb5b3
+rootfstype=ext4
+overlays=spi-spidev i2c7
+param_spidev_spi_bus=2
+user_overlays=pwm
